@@ -34,11 +34,11 @@ by students at The Baden-Württemberg Cooperative State University (DHBW) Mannhe
 1. Clone the repository
 
    ```bash
-   git clone aref-hasan/aircraft_load
+   git clone aref-hasan/CoinCounter
 
 2. Navigate to the project directory
    ```bash
-   cd aircraft_load
+   cd CoinCounter
 
 3. Install the required Python libraries:
    ```bash
