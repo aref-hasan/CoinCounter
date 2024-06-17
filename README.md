@@ -25,3 +25,21 @@ by students at The Baden-Württemberg Cooperative State University (DHBW) Mannhe
 
 [Aref Hasan](https://github.com/aref-hasan) 
 [Nik Yakovlev](https://github.com/nikyak10) 
+
+
+## Getting Started
+
+### Installation
+
+1. Clone the repository
+
+   ```bash
+   git clone aref-hasan/aircraft_load
+
+2. Navigate to the project directory
+   ```bash
+   cd aircraft_load
+
+3. Install the required Python libraries:
+   ```bash
+   pip install -r requirements.txt
