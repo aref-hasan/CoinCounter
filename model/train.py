@@ -12,8 +12,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # 2. Load and preprocess the dataset
 data_transforms = transforms.Compose([
-    transforms.Resize((224, 224)),  # Resize images to match model input
-    transforms.ToTensor(),          # Convert images to PyTorch tensors
+    transforms.Resize((224, 224)),  
+    transforms.ToTensor(),          
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 ])
 
