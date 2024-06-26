@@ -56,8 +56,8 @@ def train_model(num_epochs):
                 print(f'Epoch {epoch + 1}, Batch {i + 1}, Loss: {running_loss / 200:.4f}')
                 running_loss = 0.0
 
-    torch.save(model.state_dict(), '../model_results/model4.pth')
-    print("Model saved to model4.pth")
+    torch.save(model.state_dict(), '../model_results/recognition_model_final.pth')
+    print("Model saved to recognition_model_final.pth")
 
 if __name__ == "__main__":
     train_model(num_epochs=2)

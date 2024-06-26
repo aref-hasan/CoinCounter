@@ -25,7 +25,7 @@ num_ftrs = model.fc.in_features
 model.fc = nn.Linear(num_ftrs, 8)
 model = model.to(device)
 
-model.load_state_dict(torch.load('../models/model4.pth'))
+model.load_state_dict(torch.load('../models/recognition_model_final.pth'))
 
 criterion = nn.CrossEntropyLoss()
 

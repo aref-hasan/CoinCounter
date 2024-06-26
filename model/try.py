@@ -41,7 +41,7 @@ def load_trained_model():
     model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, 8)
-    model.load_state_dict(torch.load('../models/model4.pth'))
+    model.load_state_dict(torch.load('../models/recognition_model_final.pth'))
     model = model.to(device)
     model.eval()
     return model
@@ -123,6 +123,7 @@ def process_and_classify(image_path, classification_model):
 
 if __name__ == "__main__":
     classification_model = load_trained_model()
+
     #image_path = '../data/random/example13.jpg'
     #detected_coins, total_value = process_and_classify(image_path, classification_model)
     #print('Detected coins:', detected_coins)
