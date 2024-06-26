@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan QR Code</title>
+    <link rel="icon" href="/static/euro_coin_logo.ico">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .qr-code {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Scan this QR Code with your smartphone</h2>
+        <div class="qr-code">
+            <img src="{{ url_for('qrcode_page') }}" alt="QR Code">
+        </div>
+        <p>Open the link on your smartphone to upload a photo directly from your device.</p>
+        <a href="{{ url_for('upload_file') }}" class="button">Back to Upload Page</a>
+    </div>
+</body>
+</html>

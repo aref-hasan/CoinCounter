@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    <link rel="icon" href="/static/euro_coin_logo.ico">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80%;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        .row {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .box {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .box img {
+            max-width: 100%;
+            border-radius: 10px;
+        }
+
+        .results-box {
+            flex: 1;
+            width: 100%;
+            text-align: left;
+        }
+
+        footer {
+            margin-top: 20px;
+            width: 100%;
+            text-align: center;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="box">
+                <h3>Uploaded Image</h3>
+                <img src="{{ url_for('static', filename='uploads/' + original_image) }}" alt="Uploaded Image">
+            </div>
+            <div class="box">
+                <h3>Image with Bounding Boxes</h3>
+                <img src="{{ url_for('static', filename='uploads/' + result_image) }}" alt="Result Image">
+            </div>
+        </div>
+        <div class="box results-box">
+            <h3>Detected Coins and Total Value</h3>
+            <ul>
+                {% for coin in detected_coins %}
+                <li>{{ coin }}</li>
+                {% endfor %}
+            </ul>
+            <p><strong>Total Value: €{{ '%.2f' % total_value }}</strong></p>
+        </div>
+        <footer>
+            <p>Coin Counter App © 2024</p>
+            <p>by Aref Hasan & Nik Yakovlev</p>
+        </footer>
+    </div>
+</body>
+</html>

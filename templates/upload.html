@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <link rel="icon" href="/static/euro_coin_logo.ico">
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .file-input {
+            margin: 10px 0;
+        }
+
+        .file-input input {
+            display: none;
+        }
+
+        .file-input label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .file-input label:hover {
+            background-color: #0056b3;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin: 10px 0;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        #uploadButton {
+            margin-top: 20px;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Upload an Image</h2>
+        <form id="uploadForm" action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+            <div class="file-input">
+                <input type="file" id="fileInput" name="file" accept="image/*">
+                <label for="fileInput">Choose file</label>
+            </div>
+            <a class="button" id="cameraButton" href="{{ url_for('take_photo') }}">Take a photo</a>
+            <a class="button" id="qrCodeButton" href="{{ url_for('scan_qr_code') }}">Scan QR Code</a>
+            <button type="submit" id="uploadButton" class="button">Upload</button>
+        </form>
+        <div id="error-message">{{ message }}</div>
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            const fileInput = document.getElementById('fileInput');
+            const errorMessage = document.getElementById('error-message');
+
+            if (!fileInput.files.length) {
+                event.preventDefault();
+                errorMessage.textContent = 'No selected file';
+            } else {
+                errorMessage.textContent = '';
+            }
+        });
+    </script>
+</body>
+</html>

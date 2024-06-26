@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take a Photo</title>
+    <link rel="icon" href="{{ url_for('static', filename='euro_coin_logo.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        video, canvas {
+            display: block;
+            margin: 10px auto;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        #uploadButton {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Take a Photo</h2>
+        <video id="video" width="640" height="480" autoplay></video>
+        <button id="snapButton" class="button">Snap Photo</button>
+        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+        <form id="photoForm" action="{{ url_for('upload_photo') }}" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="imageData" id="imageData">
+            <button type="submit" id="uploadButton" class="button">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        // Set up video stream
+        const video = document.getElementById('video');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(err => {
+                console.error('Error accessing webcam: ', err);
+            });
+
+        // Snap photo
+        const canvas = document.getElementById('canvas');
+        const snapButton = document.getElementById('snapButton');
+        const imageDataInput = document.getElementById('imageData');
+
+        snapButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/png');
+            imageDataInput.value = imageData;
+            canvas.style.display = 'block';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Page</title>
+    <link rel="icon" href="{{ url_for('static', filename='euro_coin_logo.ico') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            font-family: Arial, sans-serif;
+        }
+
+        .background {
+            background-image: url("{{ url_for('static', filename='background.jpg') }}");
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: blur(2px);
+            z-index: -1;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .logo {
+            width: 100px;
+            height: auto;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            color: black;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="overlay">
+        <div class="container">
+            <img src="{{ url_for('static', filename='euro_coin_logo.ico') }}" alt="Euro Coin Logo" class="logo">
+            <h1>Welcome to Coin Counter App</h1>
+            <a href="{{ url_for('upload_file') }}" class="btn">Start</a>
+        </div>
+    </div>
+    <footer>
+        <p>Coin Counter App © 2024</p>
+        <p>by Aref Hasan & Nik Yakovlev</p>
+    </footer>
+</body>
+</html>
