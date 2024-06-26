@@ -11,7 +11,7 @@ from inference_sdk import InferenceHTTPClient
 import socket
 import qrcode
 from io import BytesIO
-import base64  # Import base64 module
+import base64  
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
@@ -118,7 +118,7 @@ def process_and_classify(image_path, classification_model):
     boxes = [[d['x'] - d['width'] / 2, d['y'] - d['height'] / 2, d['x'] + d['width'] / 2, d['y'] + d['height'] / 2] for d in detections]
     scores = [d['confidence'] for d in detections]
 
-    # Apply Non-Maximum Suppression (NMS)
+    # apply Non-Maximum Suppression (NMS)
     nms_boxes, nms_scores = non_max_suppression(boxes, scores)
 
     for box in nms_boxes:
