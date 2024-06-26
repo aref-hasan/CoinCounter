@@ -41,11 +41,12 @@ The Coin Counter App is a web application designed to assist users in identifyin
    ```bash
    pip install -r requirements.txt
 
-4. Run the Flask application:
+### Run 
+1. Run the Flask application:
     ```bash
     python app/app.py
 
-5. Access the app:
+2. Access the app:
    open a web browser and go to http://127.0.0.1:5000 to access the Coin Counter App.
    
 ## Usage 
