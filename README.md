@@ -16,10 +16,10 @@
 - [License](#license)
 
 ## About
+### Description
+
 The Coin Counter App is a web application designed to assist users in identifying and counting Euro coins. Utilizing machine learning and image processing techniques, the app can accurately detect various Euro coin denominations from uploaded images. This project was developed as part of a university project by Aref Hasan and Nik Yakovlev in 2024 at The Baden-Württemberg Cooperative State University (DHBW) Mannheim in Germany
-
-
-## Team Members:
+### Team Members:
 [Nik Yakovlev](https://github.com/nikyak10) 
 [Aref Hasan](https://github.com/aref-hasan) 
 
