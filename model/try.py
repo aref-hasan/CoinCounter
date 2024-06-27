@@ -1,16 +1,26 @@
-from inference_sdk import InferenceHTTPClient
-import cv2
-from PIL import Image
+#############################Libraries################################
+import os
 import torch
+import torchvision
 import torchvision.transforms as transforms
-from torchvision.models import resnet18, ResNet18_Weights
+from torch.utils.data import DataLoader, random_split
+from torchvision.datasets import ImageFolder
+import torch.optim as optim
 import torch.nn as nn
+import cv2
 import numpy as np
+from PIL import Image
+from torchvision.models import resnet18, ResNet18_Weights
+from roboflow import InferenceHTTPClient
 
-# Setup device
+######################################################################
+######################################################################
+
+
+# setup device: use GPU if available, otherwise use CPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Class index to coin type mapping and their respective values
+# class index to coin type mapping and their respective values
 class_index_to_coin_type = {
     0: ('10ct', 0.10),
     1: ('1ct', 0.01),
@@ -22,7 +32,7 @@ class_index_to_coin_type = {
     7: ('5ct', 0.05)
 }
 
-# Function to draw bounding boxes on an image
+# function to draw bounding boxes on an image
 def draw_bounding_boxes(image_path, detections):
     image = cv2.imread(image_path)
     for detection in detections:
@@ -36,7 +46,7 @@ def draw_bounding_boxes(image_path, detections):
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-# Function to load the trained classification model
+# function to load the trained classification model
 def load_trained_model():
     model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
     num_ftrs = model.fc.in_features
@@ -46,14 +56,14 @@ def load_trained_model():
     model.eval()
     return model
 
-# Function to predict the class of an image
+# function to predict the class of an image
 def predict_image(model, image_tensor):
     with torch.no_grad():
         outputs = model(image_tensor)
         _, predicted_idx = torch.max(outputs, 1)
         return predicted_idx.item()
 
-# Perform inference with Roboflow
+# perform inference with roboflow
 def perform_inference(image_path):
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -61,7 +71,7 @@ def perform_inference(image_path):
     )
     return CLIENT.infer(image_path, model_id="coin-counting-2/3")
 
-# Non-Maximum Suppression (NMS)
+# non-maximum suppression (nms)
 def non_max_suppression(boxes, scores, iou_threshold=0.5):
     if len(boxes) == 0:
         return [], []
@@ -89,7 +99,7 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5):
         order = order[inds + 1]
     return boxes[keep].tolist(), scores[keep].tolist()
 
-# Main function to process an image, detect coins, and classify each coin
+# main function to process an image, detect coins, and classify each coin
 def process_and_classify(image_path, classification_model):
     result = perform_inference(image_path)
     detections = result.get('predictions', [])
@@ -106,7 +116,7 @@ def process_and_classify(image_path, classification_model):
     boxes = [[d['x'] - d['width'] / 2, d['y'] - d['height'] / 2, d['x'] + d['width'] / 2, d['y'] + d['height'] / 2] for d in detections]
     scores = [d['confidence'] for d in detections]
 
-    # Apply Non-Maximum Suppression (NMS)
+    # apply non-maximum suppression (nms)
     nms_boxes, nms_scores = non_max_suppression(boxes, scores)
 
     for box in nms_boxes:

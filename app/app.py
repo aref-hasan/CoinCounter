@@ -1,3 +1,4 @@
+#############################Libraries#################################
 import os
 import cv2
 from PIL import Image
@@ -12,19 +13,23 @@ import socket
 import qrcode
 from io import BytesIO
 import base64  
+######################################################################
+######################################################################
 
+
+# initialize Flask application
 app = Flask(__name__)
 UPLOAD_FOLDER = 'app/static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Ensure the upload folder exists
+# ensure the upload folder exists
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Setup device
+# setup device: use GPU if available, otherwise use CPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Class index to coin type mapping and their respective values
+# class index to coin type mapping and their respective values
 class_index_to_coin_type = {
     0: ('10ct', 0.10),
     1: ('1ct', 0.01),
@@ -36,8 +41,7 @@ class_index_to_coin_type = {
     7: ('5ct', 0.05)
 }
 
-
-# Function to draw bounding boxes on an image
+# function to draw bounding boxes on an image
 def draw_bounding_boxes(image_path, output_path, detections):
     image = cv2.imread(image_path)
     for detection in detections:
@@ -48,8 +52,8 @@ def draw_bounding_boxes(image_path, output_path, detections):
         thickness = 2
         image = cv2.rectangle(image, start_point, end_point, color, thickness)
     cv2.imwrite(output_path, image)
-    
-# Function to load the trained classification model
+
+# function to load the trained classification model
 def load_trained_model():
     model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
     num_ftrs = model.fc.in_features
@@ -59,14 +63,14 @@ def load_trained_model():
     model.eval()
     return model
 
-# Function to predict the class of an image
+# function to predict the class of an image
 def predict_image(model, image_tensor):
     with torch.no_grad():
         outputs = model(image_tensor)
         _, predicted_idx = torch.max(outputs, 1)
         return predicted_idx.item()
 
-# Perform inference with Roboflow
+# perform inference with roboflow
 def perform_inference(image_path):
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -74,7 +78,7 @@ def perform_inference(image_path):
     )
     return CLIENT.infer(image_path, model_id="coin-counting-2/3")
 
-# Non-Maximum Suppression (NMS)
+# non-maximum suppression (nms)
 def non_max_suppression(boxes, scores, iou_threshold=0.5):
     if len(boxes) == 0:
         return [], []
@@ -102,7 +106,7 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5):
         order = order[inds + 1]
     return boxes[keep].tolist(), scores[keep].tolist()
 
-# Main function to process an image, detect coins, and classify each coin
+# main function to process an image, detect coins, and classify each coin
 def process_and_classify(image_path, classification_model):
     result = perform_inference(image_path)
     detections = result.get('predictions', [])
@@ -119,7 +123,7 @@ def process_and_classify(image_path, classification_model):
     boxes = [[d['x'] - d['width'] / 2, d['y'] - d['height'] / 2, d['x'] + d['width'] / 2, d['y'] + d['height'] / 2] for d in detections]
     scores = [d['confidence'] for d in detections]
 
-    # apply Non-Maximum Suppression (NMS)
+    # apply non-maximum suppression (nms)
     nms_boxes, nms_scores = non_max_suppression(boxes, scores)
 
     for box in nms_boxes:
@@ -135,19 +139,26 @@ def process_and_classify(image_path, classification_model):
     draw_bounding_boxes(image_path, result_image_path, [{'x': (box[0] + box[2]) / 2, 'y': (box[1] + box[3]) / 2, 'width': box[2] - box[0], 'height': box[3] - box[1]} for box in nms_boxes])
     return detected_coins, total_value, result_image_path
 
+
+######################################################################
+######################################################################
+
+# route for the home page
 @app.route('/')
 def index():
     return render_template('index.html')
 
+# route for taking a photo
 @app.route('/take-photo')
 def take_photo():
     return render_template('take_photo.html')
 
+# route for scanning a QR code
 @app.route('/scan-qr-code')
 def scan_qr_code():
     return render_template('scan_qr_code.html')
 
-
+# route for uploading a file
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -164,7 +175,7 @@ def upload_file():
             return render_template('result.html', original_image=file.filename, result_image=os.path.basename(result_image_path), detected_coins=detected_coins, total_value=total_value)
     return render_template('upload.html')
 
-
+# route for the phone page
 @app.route('/phone-page', methods=['GET', 'POST'])
 def phone_page():
     if request.method == 'POST':
@@ -181,16 +192,17 @@ def phone_page():
             return render_template('result.html', original_image=file.filename, result_image=os.path.basename(result_image_path), detected_coins=detected_coins, total_value=total_value)
     return render_template('phone_page.html')
 
+# route for uploading a photo via a POST request
 @app.route('/upload_photo', methods=['POST'])
 def upload_photo():
     image_data = request.form['imageData']
     if image_data:
-        # Decode base64 image
+        # decode base64 image
         image_data = image_data.split(",")[1]
         image_data = base64.b64decode(image_data)
         image = Image.open(BytesIO(image_data))
         
-        # Save the image
+        # save the image
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'captured_image.png')
         image.save(file_path)
         
@@ -199,10 +211,11 @@ def upload_photo():
         return render_template('result.html', original_image='captured_image.png', result_image=os.path.basename(result_image_path), detected_coins=detected_coins, total_value=total_value)
     return 'No image data', 400
 
+# route to generate and display a QR code
 @app.route('/qrcode')
 def qrcode_page():
     local_ip = get_local_ip()
-    port = 5000  # Change this to the actual port if different
+    port = 5000  # change this to the actual port if different
     url = f"http://{local_ip}:{port}/phone-page"
 
     qr = qrcode.QRCode(
@@ -222,16 +235,12 @@ def qrcode_page():
 
     return send_file(buffer, mimetype='image/png')
 
-# Neue Route für die Datei-Upload-Seite
+# route for the file upload page
 @app.route('/file-upload')
 def file_upload_page():
     return render_template('file_upload.html')
 
-# Bestehende Routen bleiben gleich...
-
-
-
-# Function to get local IP address
+# function to get local IP address
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
