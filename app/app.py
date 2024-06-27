@@ -14,7 +14,7 @@ from io import BytesIO
 import base64  
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'static/uploads'
+UPLOAD_FOLDER = 'app/static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure the upload folder exists
@@ -36,6 +36,7 @@ class_index_to_coin_type = {
     7: ('5ct', 0.05)
 }
 
+
 # Function to draw bounding boxes on an image
 def draw_bounding_boxes(image_path, output_path, detections):
     image = cv2.imread(image_path)
@@ -47,7 +48,7 @@ def draw_bounding_boxes(image_path, output_path, detections):
         thickness = 2
         image = cv2.rectangle(image, start_point, end_point, color, thickness)
     cv2.imwrite(output_path, image)
-
+    
 # Function to load the trained classification model
 def load_trained_model():
     model = resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)
@@ -138,22 +139,6 @@ def process_and_classify(image_path, classification_model):
 def index():
     return render_template('index.html')
 
-@app.route('/upload', methods=['GET', 'POST'])
-def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return render_template('upload.html', message='No file part')
-        file = request.files['file']
-        if file.filename == '':
-            return render_template('upload.html', message='No selected file')
-        if file:
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-            file.save(file_path)
-            classification_model = load_trained_model()
-            detected_coins, total_value, result_image_path = process_and_classify(file_path, classification_model)
-            return render_template('result.html', original_image=file.filename, result_image=os.path.basename(result_image_path), detected_coins=detected_coins, total_value=total_value)
-    return render_template('upload.html')
-
 @app.route('/take-photo')
 def take_photo():
     return render_template('take_photo.html')
@@ -161,6 +146,23 @@ def take_photo():
 @app.route('/scan-qr-code')
 def scan_qr_code():
     return render_template('scan_qr_code.html')
+
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return render_template('file_upload.html', message='No file part')
+        file = request.files['file']
+        if file.filename == '':
+            return render_template('file_upload.html', message='No selected file')
+        if file:
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(file_path)
+            classification_model = load_trained_model()
+            detected_coins, total_value, result_image_path = process_and_classify(file_path, classification_model)
+            return render_template('result.html', original_image=file.filename, result_image=os.path.basename(result_image_path), detected_coins=detected_coins, total_value=total_value)
+    return render_template('upload.html')
 
 
 @app.route('/phone-page', methods=['GET', 'POST'])
@@ -219,6 +221,13 @@ def qrcode_page():
     buffer.seek(0)
 
     return send_file(buffer, mimetype='image/png')
+
+# Neue Route für die Datei-Upload-Seite
+@app.route('/file-upload')
+def file_upload_page():
+    return render_template('file_upload.html')
+
+# Bestehende Routen bleiben gleich...
 
 
 
