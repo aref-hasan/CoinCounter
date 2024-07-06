@@ -72,5 +72,5 @@ We welcome contributions to enhance the Coin Counter App! If you have any ideas,
 
 
 ## License
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [License](LICENSE) file for details.
 
