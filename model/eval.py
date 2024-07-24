@@ -10,10 +10,10 @@ from torchvision.models import resnet18, ResNet18_Weights
 from sklearn.metrics import precision_score, recall_score, f1_score, accuracy_score
 from inference_sdk import InferenceHTTPClient
 
-# Setup device
+# setup device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Class index to coin type mapping
+# class index to coin type mapping
 class_index_to_coin_type = {
     0: '10ct',
     1: '1ct',
@@ -25,7 +25,7 @@ class_index_to_coin_type = {
     7: '5ct'
 }
 
-# Coin value mapping
+# coin value mapping
 coin_value_mapping = {
     '1ct': 1,
     '2ct': 2,
@@ -37,7 +37,7 @@ coin_value_mapping = {
     '2euro': 200
 }
 
-# Function to draw bounding boxes on an image
+# function to draw bounding boxes on an image
 def draw_bounding_boxes(image_path, detections):
     # This function now does nothing.
     pass
@@ -52,14 +52,14 @@ def load_trained_model():
     model.eval()
     return model
 
-# Function to predict the class of an image
+# function to predict the class of an image
 def predict_image(model, image_tensor):
     with torch.no_grad():
         outputs = model(image_tensor)
         _, predicted_idx = torch.max(outputs, 1)
         return predicted_idx.item()
 
-# Perform inference with Roboflow
+# inference with Roboflow
 def perform_inference(image_path):
     CLIENT = InferenceHTTPClient(
         api_url="https://detect.roboflow.com",
@@ -102,7 +102,7 @@ def non_max_suppression(boxes, scores, iou_threshold=0.5):
 
     return boxes[keep].tolist(), scores[keep].tolist()
 
-# Main function to process an image, detect coins, and classify each coin
+# main function to process an image, detect coins, and classify each coin
 def process_and_classify(image_path, classification_model):
     result = perform_inference(image_path)
     detections = result.get('predictions', [])
@@ -130,11 +130,11 @@ def process_and_classify(image_path, classification_model):
 
     return detected_coins
 
-# Function to calculate the sum of coin values
+# function to calculate the sum of coin values
 def calculate_coin_sum(coin_list):
     return sum(coin_value_mapping[coin] for coin in coin_list)
 
-# Function to evaluate the model on a list of images
+# function to evaluate the model on a list of images
 def evaluate_model(ground_truth_data, classification_model):
     predictions = []
     true_sums = ground_truth_data['ground_truth_value'].tolist()
@@ -150,7 +150,7 @@ def evaluate_model(ground_truth_data, classification_model):
     ground_truth_data['predicted_sum'] = predicted_sums  # Adding predictions as a new column
     return predictions, true_sums, ground_truth_data  # Returning the updated DataFrame
 
-# Calculate precision, recall, F1-score, and accuracy
+# precision, recall, F1-score, and accuracy
 def calculate_metrics(predictions, true_sums):
     pred_categories = [round(pred * 100) for pred in predictions]
     true_categories = [round(true * 100) for true in true_sums]
@@ -162,19 +162,19 @@ def calculate_metrics(predictions, true_sums):
     
     return precision, recall, f1, accuracy
 
-# Load the ground truth data
+# ground truth data
 ground_truth_data = pd.read_csv('image_data_plus_ground_truth.csv', delimiter=';')
 
-# Load the trained classification model
+# trained classification model
 classification_model = load_trained_model()
 
-# Evaluate the model and get the updated DataFrame
+# Evaluate model and get the updated DataFrame
 predictions, true_sums, updated_data = evaluate_model(ground_truth_data, classification_model)
 
-# Calculate metrics
+# metrics
 precision, recall, f1, accuracy = calculate_metrics(predictions, true_sums)
 
-# Print the results
+# results
 print(f'Precision: {precision:.4f}')
 print(f'Recall: {recall:.4f}')
 print(f'F1-score: {f1:.4f}')

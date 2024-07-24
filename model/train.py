@@ -35,7 +35,7 @@ test_loader = DataLoader(test_dataset, batch_size=4, shuffle=False)   # data loa
 # modify the model
 model = torchvision.models.resnet18(pretrained=True)  # load pre-trained ResNet18 model
 num_ftrs = model.fc.in_features
-model.fc = nn.Linear(num_ftrs, 8)  # we have 8 classes for 8 types of coins
+model.fc = nn.Linear(num_ftrs, 8)  # 8 classes for 8 types of coins
 model = model.to(device)  # move model to the appropriate device (CPU or GPU)
 
 # training
